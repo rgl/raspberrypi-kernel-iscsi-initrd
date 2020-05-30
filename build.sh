@@ -9,11 +9,12 @@ apt-get dist-upgrade -y
 apt-get install -y --no-install-recommends open-iscsi
 
 # create the initrd tarball.
-tarball_path="$PWD/raspberrypi-kernel-iscsi-initrd.tgz"
+kernel_version="$(uname -r | perl -ne '/(\d+(\.\d+)+)/ && print $1')"
+tarball_path="$PWD/raspberrypi-kernel-iscsi-initrd-$kernel_version.tgz"
 pushd /boot
 sed -i -E 's,#(INITRD)=.+,\1=Yes,g' /etc/default/raspberrypi-kernel
 dpkg-reconfigure raspberrypi-kernel
-tar czf "$tarball_path" initrd.img*
+tar czf "$tarball_path" initrd.img-$kernel_version*
 tar tf "$tarball_path"
 sha256sum "$tarball_path"
 popd
